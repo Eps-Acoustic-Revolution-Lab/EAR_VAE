@@ -1,0 +1,1 @@
+pip install torch torchaudio auraloss numpy

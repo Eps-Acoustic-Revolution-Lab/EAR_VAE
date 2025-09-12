@@ -1,0 +1,34 @@
+{
+  "transformer": {
+    "depth": 2,
+    "config": {
+      "rotary_pos_emb": true,
+      "dim_heads": 32
+    }
+  },
+  "encoder": {
+    "config": {
+      "in_channels": 2,
+      "channels": 128,
+      "c_mults": [1, 2, 4, 8, 16],
+      "strides": [2, 4, 4, 4, 8],
+      "latent_dim": 128,
+      "use_snake": true
+    }
+  },
+  "decoder": {
+    "config": {
+      "out_channels": 2,
+      "channels": 128,
+      "c_mults": [1, 2, 4, 8, 16],
+      "strides": [2, 4, 4, 4, 8],
+      "latent_dim": 64,
+      "use_nearest_upsample": false,
+      "use_snake": true,
+      "final_tanh": false
+    }
+  },
+  "latent_dim": 64,
+  "downsampling_ratio": 1024,
+  "io_channels": 2
+}

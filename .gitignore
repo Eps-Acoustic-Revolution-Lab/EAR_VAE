@@ -1,0 +1,6 @@
+pretrained_weight/*
+results
+data/*
+__pycache__
+*.pyc
+docs
