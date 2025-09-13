@@ -27,7 +27,7 @@ Follow these steps to set up the environment and install the necessary dependenc
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/Eps-Acoustic-Revolution-Lab/EAR_VAE.git
     cd ear_vae
     ```
 

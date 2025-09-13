@@ -108,7 +108,6 @@ After running, the script will generate two files inside each model's directory:
         "avg_interchannel_coherence": 0.92,
         "avg_gen_lufs-i": -14.2,
         "avg_gt_lufs-i": -14.0,
-        ...
     }
     ```
 
@@ -118,6 +117,5 @@ After running, the script will generate two files inside each model's directory:
     file_count: 50
     avg_sisdr: 15.78...
     avg_mel_distance: 0.45...
-    ...
     ```
 This allows for quick inspection of a model's performance without needing to parse the JSON.
