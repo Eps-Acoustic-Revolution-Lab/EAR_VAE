@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Primary Meta Tags -->
+  <!-- TODO: Replace with your paper title and author names -->
+  <meta name="title" content="Back to Ear: Perceptually Driven High Fidelity Music Reconstruction">
+  <!-- TODO: Write a compelling 150-160 character description of your research -->
+  <meta name="description" content="Variational Autoencoders (VAEs) are essential for large-scale audio tasks like diffusion-based generation. However, existing open-source models often neglect auditory perceptual aspects during training, leading to weaknesses in phase accuracy and stereophonic spatial representation. To address these challenges, we propose ϵar-VAE, an open-source music signal reconstruction model that rethinks and optimizes the VAE training paradigm. Our contributions are threefold: (i) A K-weighting perceptual ﬁlter applied prior to loss calculation to align the objective with auditory perception. (ii) Two novel phase losses: a Correlation Loss for stereo coherence, and a Phase Loss using its derivatives—Instantaneous Frequency and Group Delay—for precision. (iii) A new spectral supervision paradigm where magnitude is supervised by all four MSLR (Mid/Side/Left/Right) components, while phase is supervised only by the LR components. Experiments show ϵar-VAE at 44.1kHz substantially outperforms leading open-source models across diverse metrics, showing particular strength in reconstructing high-frequency harmonics and the spatial characteristics.">
+  <!-- TODO: Add 5-10 relevant keywords for your research area -->
+  <meta name="keywords" content="VAE, Music, Phase, Perceptual Weighting">
+  <!-- TODO: List all authors -->
+  <meta name="author" content="Kangdi Wang, Zhiyue Wu, Dinghao Zhou, Rui Lin, Junyu Dai, Tao Jiang">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <!-- TODO: Replace with your institution or lab name -->
+  <meta property="og:site_name" content="ϵar-LAB">
+  <!-- TODO: Same as paper title above -->
+  <meta property="og:title" content="Back to Ear: Perceptually Driven High Fidelity Music Reconstruction">
+  <!-- TODO: Same as description above -->
+  <meta property="og:description" content="Variational Autoencoders (VAEs) are essential for large-scale audio tasks like diffusion-based generation. However, existing open-source models often neglect auditory perceptual aspects during training, leading to weaknesses in phase accuracy and stereophonic spatial representation. To address these challenges, we propose ϵar-VAE, an open-source music signal reconstruction model that rethinks and optimizes the VAE training paradigm. Our contributions are threefold: (i) A K-weighting perceptual ﬁlter applied prior to loss calculation to align the objective with auditory perception. (ii) Two novel phase losses: a Correlation Loss for stereo coherence, and a Phase Loss using its derivatives—Instantaneous Frequency and Group Delay—for precision. (iii) A new spectral supervision paradigm where magnitude is supervised by all four MSLR (Mid/Side/Left/Right) components, while phase is supervised only by the LR components. Experiments show ϵar-VAE at 44.1kHz substantially outperforms leading open-source models across diverse metrics, showing particular strength in reconstructing high-frequency harmonics and the spatial characteristics.">
+  <!-- TODO: Replace with your actual website URL -->
+  <meta property="og:url" content="https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE">
+  <!-- TODO: Create a 1200x630px preview image and update path -->
+  <meta property="og:image" content="https://YOUR_DOMAIN.com/static/images/social_preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Back to Ear: Perceptually Driven High Fidelity Music Reconstruction - Research Preview">
+  <meta property="article:published_time" content="2024-01-01T00:00:00.000Z">
+  <meta property="article:author" content="Kangdi Wang">
+  <meta property="article:section" content="Research">
+  <meta property="article:tag" content="Music Reconstruction">
+  <meta property="article:tag" content="Variational Autoencoders">
+
+  <!-- Academic/Research Specific -->
+  <meta name="citation_title" content="Back to Ear: Perceptually Driven High Fidelity Music Reconstruction">
+  <meta name="citation_author" content="Wang, Kangdi">
+  <meta name="citation_publication_date" content="2024">
+  <meta name="citation_conference_title" content="CONFERENCE_NAME">
+  <meta name="citation_pdf_url" content="https://YOUR_DOMAIN.com/static/pdfs/paper.pdf">
+  
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://documentcloud.adobe.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+
+  <!-- TODO: Replace with your paper title and authors -->
+  <title>Back to Ear: Perceptually Driven High Fidelity Music Reconstruction - Kangdi Wang, Zhiyue Wu, Dinghao Zhou, Rui Lin, Junyu Dai, Tao Jiang | Academic Research</title>
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+  
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  <!-- Fallback for browsers that don't support preload -->
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  
+  <!-- Fonts - Optimized loading -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Defer non-critical JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  
+  <!-- Structured Data for Academic Papers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Back to Ear: Perceptually Driven High Fidelity Music Reconstruction",
+    "description": "BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "FIRST_AUTHOR_NAME",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "INSTITUTION_NAME"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "SECOND_AUTHOR_NAME",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "INSTITUTION_NAME"
+        }
+      }
+    ],
+    "datePublished": "2024-01-01",
+    "publisher": {
+      "@type": "Organization",
+      "name": "CONFERENCE_OR_JOURNAL_NAME"
+    },
+    "url": "https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE",
+    "image": "https://YOUR_DOMAIN.com/static/images/social_preview.png",
+    "keywords": ["KEYWORD1", "KEYWORD2", "KEYWORD3", "machine learning", "computer vision"],
+    "abstract": "FULL_ABSTRACT_TEXT_HERE",
+    "citation": "BIBTEX_CITATION_HERE",
+    "isAccessibleForFree": true,
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": "https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE"
+    },
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "RESEARCH_AREA_1"
+      },
+      {
+        "@type": "Thing", 
+        "name": "RESEARCH_AREA_2"
+      }
+    ]
+  }
+  </script>
+  
+  <!-- Website/Organization Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "INSTITUTION_OR_LAB_NAME",
+    "url": "https://YOUR_INSTITUTION_WEBSITE.com",
+    "logo": "https://YOUR_DOMAIN.com/static/images/favicon.ico",
+    "sameAs": [
+      "https://twitter.com/YOUR_TWITTER_HANDLE",
+      "https://github.com/YOUR_GITHUB_USERNAME"
+    ]
+  }
+  </script>
+</head>
+<body>
+
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <!-- TODO: Replace with your paper title -->
+            <h1 class="title is-1 publication-title">Back to Ear: Perceptually Driven High Fidelity Music Reconstruction</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- TODO: Replace with your paper authors and their personal links -->
+              <span class="author-block">
+              <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">Kangdi Wang</a><sup>1</sup>, </span>
+              <span class="author-block">
+              <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Zhiyue Wu</a><sup>2</sup>, </span>
+              <span class="author-block">
+              <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Dinghao Zhou</a><sup>3</sup>, </span>
+              <span class="author-block">
+              <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Rui Lin</a>, </span>
+              <span class="author-block">
+              <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Junyu Dai</a><sup>*</sup>, </span>
+              <span class="author-block">
+              <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Tao Jiang</a>
+              </span>
+            </div>
+
+                  <div class="is-size-5 publication-authors">
+                    <!-- TODO: Replace with your institution and conference/journal info -->
+                    <span class="author-block">ϵar-LAB<br>ICASSP 2026</span>
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- TODO: Update with your arXiv paper ID -->
+                      <!-- <span class="link-block">
+                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span> -->
+
+                    <!-- TODO: Add your supplementary material PDF or remove this section -->
+                    <!-- <span class="link-block">
+                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="fas fa-file-pdf"></i>
+                      </span>
+                      <span>Supplementary</span>
+                    </a>
+                  </span> -->
+
+                  <!-- TODO: Replace with your GitHub repository URL -->
+                  <span class="link-block">
+                    <a href="https://github.com/Eps-Acoustic-Revolution-Lab/EAR_VAE" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                    </a>
+                  </span>
+
+                  <span class="link-block">
+                    <a href="https://huggingface.co/earlab/EAR_VAE" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fa fa-box"></i>
+                    </span>
+                    <span>Model Weights</span>
+                    </a>
+                  </span>
+
+                <!-- TODO: Update with your arXiv paper ID -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <!-- TODO: Replace with your paper abstract -->
+          <p>
+            Variational Autoencoders (VAEs) are essential for large-scale audio tasks like diffusion-based generation. However, existing open-source models often neglect auditory perceptual aspects during training, leading to weaknesses in phase accuracy and stereophonic spatial representation.
+            To address these challenges, we propose ϵar-VAE, an open-source music signal reconstruction model that rethinks and optimizes the VAE training paradigm.
+          </p>
+          <p>
+            Our contributions are threefold: 
+            <br>(i) <strong><u>A K-weighting perceptual ﬁlter</u></strong> applied prior to loss calculation to align the objective with auditory perception. 
+            <br>(ii) <strong><u>Two novel phase losses</u></strong>: a Correlation Loss for stereo coherence, and a Phase Loss using its derivatives—Instantaneous Frequency and Group Delay—for precision. 
+            <br>(iii) <strong><u>A new spectral supervision paradigm</u></strong> where magnitude is supervised by all four MSLR (Mid/Side/Left/Right) components, while phase is supervised only by the LR components.
+          </p>
+          <p>
+            Experiments show ϵar-VAE at 44.1kHz substantially outperforms leading open-source models across diverse metrics, showing particular strength in reconstructing high-frequency harmonics and the spatial characteristics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Image carousel -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+      <div class="item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px;">
+        <!-- Your image here -->
+        <img src="static/images/table.png" alt="Second research result visualization" loading="lazy" style="max-height: 300px; object-fit: contain;"/>
+        <h2 class="subtitle has-text-centered">
+          Results on MuChin and In-house validation split, <b>BOLD</b> for the best performance and <u>UNDERLINE</u> for the second best.
+        </h2>
+      </div>
+      <div class="item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px;">
+        <!-- Your image here -->
+        <img src="static/images/THD_with_table.jpg" alt="Second research result visualization" loading="lazy" style="max-height: 300px; object-fit: contain;"/>
+        <h2 class="subtitle has-text-centered">
+          <b>THD+N</b> test based on AES17 standard for different codec models, our model demonstrates relatively more reasonable harmonic patterns in music.
+        </h2>
+      </div>
+      <div class="item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px;">
+        <!-- Your image here -->
+        <img src="static/images/KvsA_CQTvsSTFT.jpg" alt="Second research result visualization" loading="lazy" style="max-height: 300px; object-fit: contain;"/>
+        <h2 class="subtitle has-text-centered">
+          <b>K</b>-weighting vs <b>A</b>-weighting & CQT vs STFT comparison for music signals.
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<!-- End image carousel -->
+
+<!-- Audio comparison section -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Audio Reconstruction Comparison</h2>
+      <p class="subtitle is-5 has-text-centered">
+        Compare the original audio with our ϵar-VAE reconstructions.
+      </p>
+      
+      <!-- Part 1: Original vs ϵar-VAE Reconstruction -->
+      <div class="columns is-multiline is-centered">
+        
+        <!-- Audio pair 1 -->
+        <div class="column is-12">
+          <div class="box">
+            <h4 class="subtitle is-4 has-text-centered mb-4">Sample 1: C Pop</h4>
+            <div class="columns is-vcentered">
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>Original Audio</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_cpop.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>ϵar-VAE Reconstruction</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_cpop_ear_vae_44k.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio pair 2 -->
+        <div class="column is-12">
+          <div class="box">
+            <h4 class="subtitle is-4 has-text-centered mb-4">Sample 2: Hip-Hop</h4>
+            <div class="columns is-vcentered">
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>Original Audio</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_hiphop.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>
+                  <p class="has-text-grey is-size-7 mt-2">Click play to hear the original recording</p>
+                </div>
+              </div>
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>ϵar-VAE Reconstruction</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_hiphop_ear_vae_44k.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                  <p class="has-text-grey is-size-7 mt-2">Compare with our high-fidelity reconstruction</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio pair 3 -->
+        <div class="column is-12">
+          <div class="box">
+            <h4 class="subtitle is-4 has-text-centered mb-4">Sample 3: Rock</h4>
+            <div class="columns is-vcentered">
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>Original Audio</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_rock.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>
+                  <p class="has-text-grey is-size-7 mt-2">Note the high-frequency harmonics</p>
+                </div>
+              </div>
+              <div class="column is-6">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3"><strong>ϵar-VAE Reconstruction</strong></h5>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 400px;">
+                    <source src="static/audio/recorn_samples/sample_rock_ear_vae_44k.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                  <p class="has-text-grey is-size-7 mt-2">Excellent preservation of spatial characteristics</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <div class="has-text-centered mt-5">
+        <p class="is-size-6 has-text-grey">
+          <i class="fas fa-headphones"></i> 
+          For best audio quality comparison, you could use a stereophonic monitor system.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Multi-model comparison section -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3 has-text-centered">Back to Ear: Reconstruction Comparison</h2>
+      <p class="subtitle is-5 has-text-centered">
+        Compare reconstructions from different popular audio models on the same music sample.
+      </p>
+      <p class="subtitle is-5 has-text-centered">
+        For auditory compensation, files are normalized to the same perceived loudness level <b>(-14 LUFS-I)</b>.
+      </p>
+      
+      <div class="columns is-multiline is-centered">
+        
+        <!-- Multi-model comparison -->
+        <div class="column is-12">
+          <div class="box">
+            <!-- <h4 class="subtitle is-4 has-text-centered mb-5">Sample: Music Comparison Across Models</h4> -->
+            
+            <!-- Original audio (reference) -->
+            <div class="columns is-centered mb-4">
+              <div class="column is-8">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-5 mb-3">
+                    <i class="fas fa-star" style="color: #FFD700;"></i>
+                    <strong>Original Audio (Reference)</strong>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mt-2">Ground truth reference for comparison</p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 500px;" class="comparison-audio" id="audio-original">
+                    <source src="static/audio/recon_comp/test_normed.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+            </div>
+
+            <!-- Model comparisons in grid -->
+            <div class="columns is-multiline">
+              
+              <!-- DAC -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-info is-light">DAC</span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/descriptinc/descript-audio-codec" target="_blank" 
+                       class="has-text-info" style="text-decoration: underline;">
+                      Descript Audio Codec 44khz
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-dac">
+                    <source src="static/audio/recon_comp/test_DAC.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+              <!-- BigVGAN -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-warning is-light">BigVGAN V2</span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/NVIDIA/BigVGAN" target="_blank" 
+                       class="has-text-warning-dark" style="text-decoration: underline;">
+                      BigVGAN V2 44khz_128band_512x
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-bigvgan">
+                    <source src="static/audio/recon_comp/test_BigVGAN.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+              <!-- Encodec -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-primary is-light">Encodec</span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/facebookresearch/encodec" target="_blank" 
+                       class="has-text-primary" style="text-decoration: underline;">
+                      Encodec from Meta 48khz
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-encodec">
+                    <source src="static/audio/recon_comp/test_Encodec.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+              <!-- Stable Audio Open -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-link is-light">Stable Audio Open</span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/Stability-AI/stable-audio-tools" target="_blank" 
+                       class="has-text-link" style="text-decoration: underline;">
+                      Stability AI's Open VAE Model 44khz
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-sao">
+                    <source src="static/audio/recon_comp/test_SAO.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+              <!-- AudioGen -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-success is-light">AudioGen</span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/AudiogenAI/agc" target="_blank" 
+                       class="has-text-success-dark" style="text-decoration: underline;">
+                      AudioGen Codec 48khz_continuous
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-agc">
+                    <source src="static/audio/recon_comp/test_AGC.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+              <!-- ϵar-VAE (Ours) -->
+              <div class="column is-4">
+                <div class="has-text-centered">
+                  <h5 class="subtitle is-6 mb-3">
+                    <span class="tag is-danger is-light">
+                      <strong>ϵar-VAE (Ours)</strong>
+                    </span>
+                  </h5>
+                  <p class="has-text-grey is-size-7 mb-3">
+                    <a href="https://github.com/Eps-Acoustic-Revolution-Lab/EAR_VAE" target="_blank" 
+                       class="has-text-danger" style="text-decoration: underline;">
+                      <strong>Our perceptually-driven model 44khz</strong>
+                    </a>
+                  </p>
+                  <audio controls controlsList="nodownload" preload="metadata" style="width: 100%; max-width: 300px;" class="comparison-audio" id="audio-earvae">
+                    <source src="static/audio/recon_comp/test_VAE.mp3" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Audio Timeline Control -->
+            <div class="audio-timeline-container mt-6">
+              <h5 class="subtitle is-6 has-text-centered mb-4">
+                <i class="fas fa-clock mr-2"></i>
+                Audio Timeline with Key Perceptual Events
+              </h5>
+              <div class="timeline-wrapper">
+                <div class="timeline-track">
+                  <div class="timeline-progress" id="timelineProgress"></div>
+                  
+                  <!-- Timeline markers -->
+                  <div class="timeline-marker" data-time="3.6" style="left: 3.87%">
+                    <div class="marker-dot marker-secondary"></div>
+                    <div class="marker-tooltip tooltip-secondary">
+                      <strong>0:03.6</strong><br>
+                      Vocal sibilance <u>"So"</u>  and plosive <u>"Ko"</u>
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="11.2" style="left: 12.04%">
+                    <div class="marker-dot marker-primary"></div>
+                    <div class="marker-tooltip tooltip-primary">
+                      <strong>0:11.2</strong><br>
+                      <u>Strings</u> positioning and <u>"Ring-Like"</u> harmonic series
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="27.0" style="left: 29.03%">
+                    <div class="marker-dot marker-accent"></div>
+                    <div class="marker-tooltip tooltip-accent">
+                      <strong>0:27.0</strong><br>
+                      Vocal <u>Distortion</u> in mid-high frequency and 10kHz+ <u>"Airy"</u> feeling
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="29.5" style="left: 31.72%">
+                    <div class="marker-dot marker-primary"></div>
+                    <div class="marker-tooltip tooltip-primary">
+                      <strong>0:29.5</strong><br>
+                      Attack & transient of <u>Piano Strikes</u> on both sides
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="46.1" style="left: 49.57%">
+                    <div class="marker-dot marker-secondary"></div>
+                    <div class="marker-tooltip tooltip-secondary">
+                      <strong>0:46.1</strong><br>
+                      Vocal <u>Esser</u>, Kick & Snare <u>Punchy</u> attack when each-part energy accumulated in high frequency
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="65" style="left: 69.89%">
+                    <div class="marker-dot marker-accent"></div>
+                    <div class="marker-tooltip tooltip-accent">
+                      <strong>1:05.0</strong><br>
+                      Vocal <u>"Metal Sound"</u> distortion in mid-high frequency
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-marker" data-time="90.5" style="left: 97.31%">
+                    <div class="marker-dot marker-primary"></div>
+                    <div class="marker-tooltip tooltip-primary">
+                      <strong>1:30.5</strong><br>
+                      The process for <u>"Swooshing"</u> effect from <u>LEFT TO RIGHT</u>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              
+              <!-- Color legend for timeline markers -->
+              <div class="timeline-legend has-text-centered mt-4 mb-3">
+                <div class="legend-items">
+                  <span class="legend-item">
+                    <span class="legend-dot legend-primary"></span>
+                    <span class="legend-text">Spatial Info</span>
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-dot legend-secondary"></span>
+                    <span class="legend-text">Frequency Coverage</span>
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-dot legend-accent"></span>
+                    <span class="legend-text">Distortion</span>
+                  </span>
+                </div>
+              </div>
+              
+              <p class="has-text-grey is-size-7 has-text-centered mt-3">
+                <i class="fas fa-hand-pointer mr-1"></i>
+                Click on the colored markers to jump to specific timestamps across all audio players
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End audio comparison section -->
+
+
+<!-- Paper poster -->
+<!-- <section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Poster</h2>
+
+      <div style="text-align: center;">
+      <iframe src="static/pdfs/ear_vae_icassp_fixed_index.pdf" width="80%" height="1000"></iframe>
+      </div>
+      </div>
+    </div>
+  </section> -->
+<!--End paper poster -->
+
+
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>@article{εarvae2025wang,
+  title={Back to Ear: Perceptually Driven High Fidelity Music Reconstruction},
+  author={Kangdi Wang, Zhiyue Wu, Dinghao Zhou, Rui Lin, Junyu Dai, Tao Jiang},
+  journal={ICASSP 2026},
+  year={2025},
+  url={https://your-domain.com/your-project-page}
+}</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
