@@ -1,5 +1,5 @@
 # εar-VAE: High Fidelity Music Reconstruction Model
-[[Demo Page](https://eps-acoustic-revolution-lab.github.io/EAR_VAE/)] - [[Model Weights](https://huggingface.co/earlab/EAR_VAE)]
+[[Demo Page](https://eps-acoustic-revolution-lab.github.io/EAR_VAE/)] - [[Model Weights](https://huggingface.co/earlab/EAR_VAE)] - [[Paper](http://arxiv.org/abs/2509.14912)]
 
 This repository contains the official inference code for εar-VAE, a 44.1 kHz music signal reconstruction model that rethinks and optimizes VAE training for audio. It targets two common weaknesses in existing open-source VAEs—phase accuracy and stereophonic spatial representation—by aligning objectives with auditory perception and introducing phase-aware training. Experiments show substantial improvements across diverse metrics, with particular strength in high-frequency harmonics and spatial characteristics.
 
