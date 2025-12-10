@@ -1,11 +1,4 @@
 {
-  "transformer": {
-    "depth": 2,
-    "config": {
-      "rotary_pos_emb": true,
-      "dim_heads": 32
-    }
-  },
   "encoder": {
     "config": {
       "in_channels": 2,
