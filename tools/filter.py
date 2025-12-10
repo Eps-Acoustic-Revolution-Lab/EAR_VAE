@@ -4,11 +4,7 @@ import numpy as np
 
 
 class FIRFilter(torch.nn.Module):
-    """
-    FIR filtering module, modified from auraloss (https://github.com/csteinmetz1/auraloss)
-    """
-
-    def __init__(self, filter_type="hp", coef=0.85, fs=44100, ntaps=101):
+    def __init__(self, filter_type="hp", coef=0.85, fs=44100, ntaps=2049):
         """Initilize FIR pre-emphasis filtering module."""
         super(FIRFilter, self).__init__()
         self.filter_type = filter_type
@@ -60,15 +56,15 @@ class FIRFilter(torch.nn.Module):
 
             # Stage 2: High-shelf filter parameters
             f_shelf = 1681.974 # Hz
-            Q_shelf = 1.69
+            Q_shelf = 0.7
             G_shelf = 4.0 # dB
             k_shelf = 10**(G_shelf / 20.0)
             w_shelf = 2 * np.pi * f_shelf
 
             # Analog transfer function for the high-shelf filter
-            # A common representation is k^2 * s^2 + k * (w/Q) * s + w^2.
-            NUM_shelf = [k_shelf**2, (k_shelf * w_shelf) / Q_shelf, w_shelf**2]
-            DEN_shelf = [1, w_shelf / Q_shelf, w_shelf**2]
+            sqrt_k = np.sqrt(k_shelf) # ~1.2589
+            NUM_shelf = [k_shelf, (sqrt_k * w_shelf) / Q_shelf, w_shelf**2]
+            DEN_shelf = [1, (w_shelf / Q_shelf), w_shelf**2]
             
             # Combine the two filters by multiplying their polynomials
             NUMs = np.polymul(NUM_hp, NUM_shelf)
@@ -84,9 +80,9 @@ class FIRFilter(torch.nn.Module):
         b, a = scipy.signal.bilinear(NUMs, DENs, fs=fs)
 
         # compute the digital filter frequency response
-        w_iir, h_iir = scipy.signal.freqz(b, a, worN=512, fs=fs)
+        w_iir, h_iir = scipy.signal.freqz(b, a, worN=16384, fs=fs)
 
-        # fit to ntaps FIR filter with least squares
+        # then we fit to ntaps FIR filter with least squares
         taps = scipy.signal.firls(ntaps, w_iir, abs(h_iir), fs=fs)
 
         # now implement this digital FIR filter as a Conv1d layer

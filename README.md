@@ -7,10 +7,14 @@ This repository contains the official inference code for εar-VAE, a 44.1 kHz mu
 <img src="./images/all_compares.jpg" width=90%>
 <img src="./images/table.png" width=90%>
 </p>
-
 <p align="center">
-<em>Upper: Ablation study across our training components.</em> <em>Down: Cross-model metric comparison on the evaluation dataset.</em>
+<em>Upper: Ablation study across our training components.</em><br>
+<em>Down: Cross-model metric comparison on the evaluation dataset.</em>
 </p>
+
+> ⭐2025-12-10 Update⭐: a new model weight works in 48kHz sample rate, same-level vocal performance with better stereophonic energy reconstruction. (mel distance `0.55` and STFT dist `0.95` for our In-house validation set.)
+
+
 
 Why εar-VAE:
 - 🎧 Perceptual alignment: A K-weighting perceptual filter is applied before loss computation to better match human hearing.
@@ -18,7 +22,7 @@ Why εar-VAE:
   - Stereo Correlation Loss for robust inter-channel coherence.
   - Phase-Derivative Loss using Instantaneous Frequency and Group Delay for phase precision.
 - 🌈 Spectral supervision paradigm: Magnitude supervised across MSLR (Mid/Side/Left/Right) components, while phase is supervised only by LR (Left/Right), improving stability and fidelity.
-- 📈 44.1 kHz performance: Outperforms leading open-source models across diverse metrics.
+- 📈 44.1 & 48 kHz performance: Outperforms leading open-source models across diverse metrics.
 
 ## 1. Installation
 
