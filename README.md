@@ -151,19 +151,3 @@ This project builds upon the work of several open-source projects. We would like
 
 Their contributions have been invaluable to the development of εar-VAE.
 
-## 7. Citation
-
-If the ideas, design, or results presented in this model are helpful, we would be grateful if you would cite our work. You can cite us using the following format:
-
-```
-@misc{wang2025earperceptuallydrivenhigh,
-      title={Back to Ear: Perceptually Driven High Fidelity Music Reconstruction}, 
-      author={Kangdi Wang and Zhiyue Wu and Dinghao Zhou and Rui Lin and Junyu Dai and Tao Jiang},
-      year={2025},
-      eprint={2509.14912},
-      archivePrefix={arXiv},
-      primaryClass={cs.SD},
-      url={https://arxiv.org/abs/2509.14912}, 
-}
-```
-
