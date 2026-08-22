@@ -12,6 +12,8 @@ This repository contains the official inference code for εar-VAE, a 44.1 kHz mu
 <em>Down: Cross-model metric comparison on the evaluation dataset.</em>
 </p>
 
+> 🔥2026-08-21 Update🔥: Now we have the brand new εar-VAE2, feel free to check it [[Here!](https://huggingface.co/earlab/EAR_VAE2)].
+
 > ⭐2025-12-10 Update⭐: A new model weight works in 48kHz sample rate, same-level vocal performance with better stereophonic energy reconstruction, it was trained with less steps (arround 1m) and smaller dataset. (mel distance `0.55` and STFT dist `0.95` for our In-house validation set.)
 
 
